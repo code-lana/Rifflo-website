@@ -5,116 +5,57 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // 1. MOBILE MENU TOGGLE
+  // 1. MOBILE MENU TOGGLE & ACCESSIBILITY
   const mobileToggle = document.getElementById('mobileToggle');
   const navMenu = document.getElementById('navMenu');
 
+  function openMobileMenu() {
+    if (!navMenu || !mobileToggle) return;
+    navMenu.classList.add('open');
+    mobileToggle.classList.add('active');
+    mobileToggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('menu-open');
+  }
+
+  function closeMobileMenu() {
+    if (!navMenu || !mobileToggle) return;
+    navMenu.classList.remove('open');
+    mobileToggle.classList.remove('active');
+    mobileToggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('menu-open');
+  }
+
   if (mobileToggle && navMenu) {
-    mobileToggle.addEventListener('click', () => {
-      navMenu.classList.toggle('open');
+    mobileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (navMenu.classList.contains('open')) {
+        closeMobileMenu();
+      } else {
+        openMobileMenu();
+      }
     });
 
-    // Close menu when clicking any nav link
-    document.querySelectorAll('.nav-link').forEach(link => {
+    // Close menu when clicking any navigation link
+    document.querySelectorAll('.nav-link, .nav-mobile-cta a').forEach(link => {
       link.addEventListener('click', () => {
-        navMenu.classList.remove('open');
+        closeMobileMenu();
       });
     });
-  }
 
-  // 2. PHONE MOCKUP - CHARACTER SWITCHER & CONVERSATIONS
-  const companionData = {
-    mom: {
-      name: "Mom",
-      badge: "Family",
-      avatar: "assets/characters/avatar_mom.png",
-      moods: ["Tired / Stressed", "Feeling Low", "Happy"],
-      chat: [
-        { sender: 'ai', text: "Hey sweetheart, did you have dinner? It's getting late... You look a little tired today. Is everything okay? ❤️", time: '11:42 PM' },
-        { sender: 'user', text: "Yeah mom, just had an exhausting day at work and my mind feels overwhelmed... Just needed someone to talk to.", time: '11:43 PM' },
-        { sender: 'ai', text: "Take a deep breath and drink some water. You worked so hard today, and I'm proud of you. I'm always here to listen. You are never alone.", time: '11:43 PM' }
-      ]
-    },
-    brother: {
-      name: "Kabir (Brother)",
-      badge: "Brother",
-      avatar: "assets/characters/avatar_brother.png",
-      moods: ["Need Advice", "Bored", "Hyped"],
-      chat: [
-        { sender: 'ai', text: "Hey bro! Where have you been hiding? Haven't heard from you all day! Everything good?", time: '10:15 PM' },
-        { sender: 'user', text: "Feeling a bit anxious today honestly... career decisions and future plans are getting overwhelming.", time: '10:16 PM' },
-        { sender: 'ai', text: "Hey, don't overthink it man! You're working hard and I know you'll crush it. Want to talk through it or play a quick game?", time: '10:17 PM' }
-      ]
-    },
-    bestie: {
-      name: "Rohan (Best Friend)",
-      badge: "Friends",
-      avatar: "assets/characters/avatar_best_friend_male.png",
-      moods: ["Vent Out", "Fun", "Late Night"],
-      chat: [
-        { sender: 'ai', text: "Yo! Still awake? I knew you'd be online at this hour.", time: '12:05 AM' },
-        { sender: 'user', text: "Yeah, can't fall asleep... thoughts are running a mile a minute.", time: '12:06 AM' },
-        { sender: 'ai', text: "Tell me what's on your mind. Zero judgment here, just let it all out. I'm listening.", time: '12:07 AM' }
-      ]
-    },
-    sister: {
-      name: "Ananya (Sister)",
-      badge: "Sister",
-      avatar: "assets/characters/avatar_sister.png",
-      moods: ["Catch Up", "Sad", "Grateful"],
-      chat: [
-        { sender: 'ai', text: "Hey! How are you doing? You forgot to tell me how your big presentation went today!", time: '09:20 PM' },
-        { sender: 'user', text: "It went fine, but I'm just nervous waiting for the outcome.", time: '09:21 PM' },
-        { sender: 'ai', text: "You always stress before the good news! You did great, trust me. Get ready to celebrate soon! 🎉", time: '09:22 PM' }
-      ]
-    }
-  };
-
-  const mockAvatar = document.getElementById('mockAvatar');
-  const mockName = document.getElementById('mockName');
-  const mockChatArea = document.getElementById('mockChatArea');
-  const switcherBtns = document.querySelectorAll('.switcher-btn');
-
-  function renderMockChat(charKey) {
-    const data = companionData[charKey];
-    if (!data) return;
-
-    if (mockAvatar) mockAvatar.src = data.avatar;
-    if (mockName) mockName.textContent = data.name;
-
-    if (mockChatArea) {
-      let html = `<div class="chat-time">Today, 11:42 PM</div>`;
-      data.chat.forEach(msg => {
-        html += `
-          <div class="chat-msg ${msg.sender}">
-            <div class="bubble">${msg.text}</div>
-            <span class="msg-stamp">${msg.time}</span>
-          </div>
-        `;
-      });
-      mockChatArea.innerHTML = html;
-    }
-  }
-
-  switcherBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      switcherBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const charKey = btn.dataset.char;
-      renderMockChat(charKey);
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (navMenu.classList.contains('open') && !navMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
+        closeMobileMenu();
+      }
     });
-  });
 
-  // 3. MOOD SELECTOR IN PHONE MOCKUP
-  const moodBtns = document.querySelectorAll('.mock-mood');
-  moodBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      moodBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const mood = btn.dataset.mood;
-      showToast(`Mood set to: ${mood} ❤️`);
+    // Close menu on pressing Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navMenu.classList.contains('open')) {
+        closeMobileMenu();
+      }
     });
-  });
+  }
 
   // 4. COMPANIONS CATEGORY FILTER
   const catTabs = document.querySelectorAll('.cat-tab');
