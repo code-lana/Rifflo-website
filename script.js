@@ -68,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const category = tab.dataset.category;
 
       compCards.forEach(card => {
-        if (category === 'all' || card.dataset.cat === category) {
+        const cardCats = (card.dataset.cat || '').split(' ');
+        if (category === 'all' || cardCats.includes(category)) {
           card.style.display = 'flex';
         } else {
           card.style.display = 'none';
@@ -224,23 +225,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4000);
   }
 
-  // 9. APK DOWNLOAD BUTTONS TRIGGER (SEAMLESS DOWNLOAD WITHOUT PAGE REDIRECT)
+  // 9. HIGH-SPEED APK DOWNLOAD BUTTONS (ZERO-LATENCY INSTANT TRIGGER)
   const downloadTriggers = document.querySelectorAll('.download-trigger, #mainDownloadBtn');
   downloadTriggers.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      e.preventDefault();
+      // Immediate visual feedback with zero latency
+      showToast('⚡ Starting Rifflo APK v1.0.2 download (~37 MB)...');
+
       const downloadUrl = btn.getAttribute('href');
-      showToast('📥 Starting Rifflo APK download... Check your browser downloads.');
-
-      // Background download trigger ensures current page stays active with zero redirects or blank tabs
-      const hiddenIframe = document.createElement('iframe');
-      hiddenIframe.style.display = 'none';
-      hiddenIframe.src = downloadUrl;
-      document.body.appendChild(hiddenIframe);
-
-      setTimeout(() => {
-        hiddenIframe.remove();
-      }, 20000);
+      if (downloadUrl && downloadUrl.startsWith('http')) {
+        // Direct browser location assignment triggers download instantly without hidden iframe sandbox delay
+        window.location.assign(downloadUrl);
+        e.preventDefault();
+      }
     });
   });
 

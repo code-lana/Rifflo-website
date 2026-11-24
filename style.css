@@ -54,9 +54,14 @@ body {
   line-height: 1.6;
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden !important;
+  overflow-x: hidden;
   position: relative;
   -webkit-font-smoothing: antialiased;
+  padding-top: 68px;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
 }
 
 /* AMBIENT BACKGROUND GLOWS (CONTAINED) */
@@ -210,12 +215,14 @@ h1, h2, h3, h4 {
   display: inline;
 }
 
-/* SITE HEADER */
+/* SITE HEADER (FROZEN / STICKY ACROSS ALL DEVICES) */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   width: 100%;
-  background: rgba(11, 13, 27, 0.92);
+  background: rgba(11, 13, 27, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
@@ -842,6 +849,7 @@ h1, h2, h3, h4 {
 .comp-badge.family { background: rgba(124, 58, 237, 0.85); color: #FFFFFF; }
 .comp-badge.friends { background: rgba(0, 230, 118, 0.85); color: #000000; }
 .comp-badge.love { background: rgba(236, 72, 153, 0.85); color: #FFFFFF; }
+.comp-badge.app { background: linear-gradient(135deg, #7C3AED, #EC4899); color: #FFFFFF; font-weight: 800; }
 
 .card-content {
   padding: 20px;
@@ -1591,18 +1599,25 @@ h1, h2, h3, h4 {
     max-width: 100%;
   }
 
+  body {
+    padding-top: 54px;
+  }
+
   body.menu-open {
     overflow: hidden !important;
   }
 
-  /* Compact Sleek Header */
+  /* Compact Sleek Frozen Header on Mobile */
   .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     padding: 10px 0;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     background: rgba(11, 13, 27, 0.98);
-    position: sticky;
-    top: 0;
     z-index: 1000;
   }
   .brand-name {
